@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "670750107168",
+    "project_id": "appflutter-3bb40",
+    "storage_bucket": "appflutter-3bb40.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:670750107168:android:f0198568a577cbbe72fe45",
+        "android_client_info": {
+          "package_name": "com.example.divergent"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBA2AKUO3LKOAy1_MyX4ZcNbGUhC-GidVs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

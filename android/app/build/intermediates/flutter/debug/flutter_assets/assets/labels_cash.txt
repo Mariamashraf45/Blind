@@ -1,0 +1,7 @@
+ 200 EGP
+ 100 EGP
+ 10 EGP
+ 5 EGP
+ 1 EGP
+ 50 EGP
+ 20 EGP
