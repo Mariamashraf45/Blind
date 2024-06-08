@@ -37,7 +37,7 @@ class _BndBox extends State<BndBox> {
     super.dispose();
   }
 
-  late String speak ;
+   String speak = "" ;
 
   late String prevString ='';
 
@@ -149,7 +149,6 @@ class _BndBox extends State<BndBox> {
     prevString = speak;
     */
     await flutterTts.speak(speak);
-
     }
 //   await Future.delayed(const Duration(seconds: 2),speak(speak)
 

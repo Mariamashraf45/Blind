@@ -4,21 +4,18 @@ import 'package:divergent/screens/blind/blind_home.dart';
 import 'package:divergent/screens/blind/blind_search/blind_search_home.dart';
 import 'package:divergent/screens/blind/blind_search/speach_text.dart';
 import 'package:divergent/screens/color_blind/color_blind_home.dart';
-import 'package:divergent/screens/deaf/screens/landing_screen.dart';
 import 'package:divergent/screens/profile.dart';
-import 'package:divergent/screens/registration.dart';
 import 'package:divergent/sos_activate.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_tflite/flutter_tflite.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shake/shake.dart';
 import 'package:easy_splash_screen/easy_splash_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tflite/tflite.dart';
 import 'package:telephony/telephony.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:firebase_ml_model_downloader/firebase_ml_model_downloader.dart';
@@ -82,8 +79,8 @@ class _MyHomePageState1 extends State<MyHomePage1> {
   void initState() {
     super.initState();
     smsPermission();
-    _getPrediction(context);
-   // loadModel();
+    //_getPrediction(context);
+    // loadModel();
     ShakeDetector detector = ShakeDetector.waitForStart(onPhoneShake: () {
       Navigator.push(
         context,
@@ -93,48 +90,48 @@ class _MyHomePageState1 extends State<MyHomePage1> {
     detector.startListening();
   }
 
-  Future<void> _getPrediction(
-      BuildContext context) async {
-      final model = await FirebaseModelDownloader.instance.getModel(
-         "ssd_mobilenet",
-        FirebaseModelDownloadType.localModelUpdateInBackground,
-        FirebaseModelDownloadConditions(
-          iosAllowsCellularAccess: true,
-          iosAllowsBackgroundDownloading: false,
-          androidChargingRequired: false,
-          androidWifiRequired: false,
-          androidDeviceIdleRequired: false,
-        ),
-      );
-      final labelsPath = await _saveLabelsToFile();
-      Tflite.close();
-      await Tflite.loadModel(
-        model: model.file.path,
-        labels: labelsPath,
-        isAsset:
-        false, // defaults to true, set to false to load resources outside assets
-        useGpuDelegate:
-        false, // defaults to false, set to true to use GPU delegate
-      );
-  }
+  // Future<void> _getPrediction(BuildContext context) async {
+  //   final model = await FirebaseModelDownloader.instance.getModel(
+  //     "ssd_mobilenet",
+  //     FirebaseModelDownloadType.localModelUpdateInBackground,
+  //     FirebaseModelDownloadConditions(
+  //       iosAllowsCellularAccess: true,
+  //       iosAllowsBackgroundDownloading: false,
+  //       androidChargingRequired: false,
+  //       androidWifiRequired: false,
+  //       androidDeviceIdleRequired: false,
+  //     ),
+  //   );
+  //   final labelsPath = await _saveLabelsToFile();
+  //   Tflite.close();
+  //   await Tflite.loadModel(
+  //     model: model.file.path,
+  //     labels: labelsPath,
+  //     isAsset:
+  //         false, // defaults to true, set to false to load resources outside assets
+  //     useGpuDelegate:
+  //         false, // defaults to false, set to true to use GPU delegate
+  //   );
+  // }
+  //
+  // Future<String> _saveLabelsToFile() async {
+  //   // Load the contents of labels.txt from assets
+  //   String labelsContent =
+  //       await rootBundle.loadString('assets/ssd_mobilenet.txt');
+  //
+  //   // Get the application documents directory
+  //   Directory documentsDirectory = await getApplicationDocumentsDirectory();
+  //
+  //   // Create the file path
+  //   String filePath = '${documentsDirectory.path}/ssd_mobilenet.txt';
+  //
+  //   // Write the contents to the file
+  //   File labelsFile = File(filePath);
+  //   await labelsFile.writeAsString(labelsContent);
+  //
+  //   return filePath;
+  // }
 
-
-  Future<String> _saveLabelsToFile() async {
-    // Load the contents of labels.txt from assets
-    String labelsContent = await rootBundle.loadString('assets/ssd_mobilenet.txt');
-
-    // Get the application documents directory
-    Directory documentsDirectory = await getApplicationDocumentsDirectory();
-
-    // Create the file path
-    String filePath = '${documentsDirectory.path}/labels.txt';
-
-    // Write the contents to the file
-    File labelsFile = File(filePath);
-    await labelsFile.writeAsString(labelsContent);
-
-    return filePath;
-  }
   void sendSms() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String n1 = prefs.getString('n1')!;
@@ -169,9 +166,6 @@ class _MyHomePageState1 extends State<MyHomePage1> {
   }
 
   FirebaseCustomModel? model;
-
-
-
 
 /*
   loadModel() async {

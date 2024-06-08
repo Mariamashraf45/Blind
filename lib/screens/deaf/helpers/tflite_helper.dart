@@ -2,18 +2,17 @@ import 'dart:async';
 
 import 'package:camera/camera.dart';
 import 'package:divergent/screens/deaf/models/result.dart';
-import 'package:tflite/tflite.dart';
-
+import 'package:flutter_tflite/flutter_tflite.dart';
 import 'app_helper.dart';
 
 class TFLiteHelper {
-
-  static StreamController<List<Result>> tfLiteResultsController = new StreamController.broadcast();
+  static StreamController<List<Result>> tfLiteResultsController =
+      new StreamController.broadcast();
   // ignore: deprecated_member_use
-  static List<Result> _outputs =[];
+  static List<Result> _outputs = [];
   static var modelLoaded = false;
 
-  static Future<Future<String?>> loadModel() async{
+  static Future<Future<String?>> loadModel() async {
     AppHelper.log("loadModel", "Loading model..");
 
     return Tflite.loadModel(
@@ -23,7 +22,6 @@ class TFLiteHelper {
   }
 
   static classifyImage(CameraImage image) async {
-
     await Tflite.runModelOnFrame(
             bytesList: image.planes.map((plane) {
               return plane.bytes;

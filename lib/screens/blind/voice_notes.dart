@@ -6,8 +6,6 @@ import 'package:sqflite/sqflite.dart';
 import 'package:avatar_glow/avatar_glow.dart';
 /*
 class MyApp extends StatelessWidget {
-
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

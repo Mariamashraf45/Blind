@@ -53,6 +53,9 @@ class ocrDialog {
                         height: 150,
                         // ignore: deprecated_member_use
                         child: ElevatedButton(
+                          style: ButtonStyle(
+                              backgroundColor:
+                              MaterialStatePropertyAll(Colors.indigo[700])),
                           onPressed: () {
                             _speakOCR(text);
                           },

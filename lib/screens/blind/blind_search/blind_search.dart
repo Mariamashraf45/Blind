@@ -2,19 +2,19 @@ import 'dart:io';
 import 'package:divergent/screens/blind/blind_search/bndbox_search.dart';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
+import 'package:flutter_tflite/flutter_tflite.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:shake/shake.dart';
-import 'package:tflite/tflite.dart';
 import 'package:telephony/telephony.dart';
 import 'dart:math' as math;
 
 import 'package:divergent/screens/blind/live_labelling/camera.dart';
 
 class blind_search extends StatefulWidget {
-  final List<CameraDescription> cameras_search ;
+  final List<CameraDescription> cameras_search;
   final String searched;
 
-  blind_search(this.cameras_search,this.searched);
+  blind_search(this.cameras_search, this.searched);
   @override
   State<blind_search> createState() => _blind_searchState();
 }
@@ -38,9 +38,9 @@ class _blind_searchState extends State<blind_search> {
   var initTime;
   @override
   // ignore: missing_return
-  void initState()  {
+  void initState() {
     super.initState();
-     // smsPermission();
+    // smsPermission();
     loadModel();
     ShakeDetector detector = ShakeDetector.waitForStart(onPhoneShake: () {
       if (sosCount == 0) {
@@ -106,7 +106,7 @@ class _blind_searchState extends State<blind_search> {
               ],
             ),
           ),
-      ],
+        ],
 
         scrollDirection: Axis.horizontal,
         pageSnapping: true,
@@ -114,5 +114,4 @@ class _blind_searchState extends State<blind_search> {
       ),
     );
   }
-
 }

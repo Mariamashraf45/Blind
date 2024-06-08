@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:colornames/colornames.dart';
 import 'package:divergent/screens/color_blind/screens/indicator.dart';
+import 'package:flutter/cupertino.dart';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -31,8 +32,9 @@ class _ImageColorState extends State<ImageColor> {
   late GlobalKey currentKey;
 
   final StreamController<Color> _stateController = StreamController<Color>();
-   late img.Image photo;
+    img.Image ? photo;
   Offset position = Offset(10, 10);
+
   void setImageBytes(ByteData imageBytes) {
     List<int> values = imageBytes.buffer.asUint8List() ;
     photo = img.decodeImage(Uint8List.view(values as ByteBuffer))!;
@@ -41,14 +43,13 @@ class _ImageColorState extends State<ImageColor> {
   @override
   void initState() {
     currentKey = useSnapshot ? paintKey : imageKey;
-
     super.initState();
     }
 
 
   @override
   Widget build(BuildContext context) {
-    print('error2');
+    //print('error2');
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -77,6 +78,7 @@ class _ImageColorState extends State<ImageColor> {
             return Padding(
               padding: const EdgeInsets.only(top: 30),
               child: Stack(
+              //  alignment: Alignment.center,
                 children: <Widget>[
                   RepaintBoundary(
                     key: paintKey,
@@ -195,7 +197,9 @@ class _ImageColorState extends State<ImageColor> {
   void _calculatePixel(Offset globalPosition) {
     if (photo == null) {
       print('not loded');
+      return ;
       }
+
     print(' loded');
     RenderBox? box = currentKey.currentContext!.findRenderObject() as RenderBox?;
     Offset localPosition = box!.globalToLocal(globalPosition);

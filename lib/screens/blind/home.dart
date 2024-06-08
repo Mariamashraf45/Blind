@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:divergent/screens/blind/voice_notes.dart';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
+import 'package:flutter_tflite/flutter_tflite.dart';
 //import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:geolocator/geolocator.dart';
@@ -11,7 +12,6 @@ import 'package:divergent/screens/blind/ocr/dialog_ocr.dart';
 import 'package:shake/shake.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 //import 'package:simple_ocr_plugin/simple_ocr_plugin.dart';
-import 'package:tflite/tflite.dart';
 import 'package:telephony/telephony.dart';
 import 'dart:math' as math;
 import 'package:vibration/vibration.dart';
@@ -21,14 +21,14 @@ import 'package:divergent/screens/blind/live_labelling/camera.dart';
 class HomePage extends StatefulWidget {
   final List<CameraDescription> cameras;
 
- HomePage(this.cameras);
+  HomePage(this.cameras);
 
   @override
   _HomePageState createState() => new _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  late List<dynamic> _recognitions =[];
+  late List<dynamic> _recognitions = [];
   int _imageHeight = 0;
   int _imageWidth = 0;
   String _model = "SSD MobileNet";
@@ -41,10 +41,8 @@ class _HomePageState extends State<HomePage> {
 
   PageController _controller = PageController(
     initialPage: 0,
-
   );
 /*
-
 
   Future getCurrImage() async {
     // ignore: deprecated_member_use
@@ -61,7 +59,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   // ignore: missing_return
-  void initState()  {
+  void initState() {
     super.initState();
     smsPermission();
     loadModel();
@@ -117,7 +115,6 @@ class _HomePageState extends State<HomePage> {
 
   void smsPermission() async {
     bool? permissionsGranted = await telephony.requestPhoneAndSmsPermissions;
-
   }
 
   loadModel() async {
@@ -146,7 +143,6 @@ class _HomePageState extends State<HomePage> {
         controller: _controller,
         onPageChanged: _speakPage,
         children: <Widget>[
-
           Container(
             child: Stack(
               children: [
@@ -171,21 +167,18 @@ class _HomePageState extends State<HomePage> {
                     // ignore: deprecated_member_use
                     child: TextButton(
                         onPressed: () => od.optionsDialogBox(context),
-
                         child: Text("Text Extraction from Images",
                             style: TextStyle(
                                 fontSize: 27.0,
                                 color: Colors.yellow[100],
                                 fontWeight: FontWeight.bold))))),
-            color:Colors.indigo[700],
+            color: Colors.indigo[700],
           ),
           Container(
             child: Center(
                 child: SizedBox.expand(
                     // ignore: deprecated_member_use
                     child: TextButton(
-
-
                         onPressed: () {
                           Navigator.of(context).push(MaterialPageRoute(
                               builder: (context) => SpeechListScreen()));
@@ -202,20 +195,19 @@ class _HomePageState extends State<HomePage> {
                   child: SizedBox.expand(
                       // ignore: deprecated_member_use
                       child: TextButton(
-                          style: ButtonStyle(backgroundColor: MaterialStatePropertyAll(Color(0xFFF9E2E))),
+                          style: ButtonStyle(
+                              backgroundColor:
+                                  MaterialStatePropertyAll(Color(0xFFF9E2E))),
                           onPressed: () {
                             Navigator.of(context).push(MaterialPageRoute(
                                 builder: (context) => test()));
                           },
-
-
                           child: Text("Currency Identifier",
                               style: TextStyle(
                                   fontSize: 27.0,
                                   color: Colors.yellow[100],
                                   fontWeight: FontWeight.bold))))),
               color: Colors.indigo[700]),
-
         ],
         scrollDirection: Axis.horizontal,
         pageSnapping: true,
@@ -224,12 +216,11 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-
   _speakPage(int a) async {
     if (a == 0) {
       await flutterTts.speak("Live object detection");
     } else if (a == 1) {
-      if (await Vibration.hasVibrator()== true) {
+      if (await Vibration.hasVibrator() == true) {
         Vibration.vibrate(amplitude: 128, duration: 1000);
       }
       await flutterTts.speak("Text Extraction from images");
@@ -239,16 +230,15 @@ class _HomePageState extends State<HomePage> {
       }
       await flutterTts.speak("Add notes");
     } else if (a == 3) {
-      if (await Vibration.hasVibrator() ==true) {
+      if (await Vibration.hasVibrator() == true) {
         Vibration.vibrate(amplitude: 128, duration: 1800);
       }
       await flutterTts.speak("Currency Identifier");
     } else if (a == 4) {
-      if (await Vibration.hasVibrator() ==true) {
+      if (await Vibration.hasVibrator() == true) {
         Vibration.vibrate(amplitude: 128, duration: 2200);
       }
       //await flutterTts.speak("SOS Settings");
-
     }
   }
 }

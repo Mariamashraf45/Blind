@@ -1,6 +1,6 @@
 import 'dart:io';
-import 'package:tflite/tflite.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_tflite/flutter_tflite.dart';
 import 'package:image_picker/image_picker.dart';
 
 class test extends StatefulWidget {
@@ -8,8 +8,7 @@ class test extends StatefulWidget {
   testState createState() => testState();
 }
 
-class testState extends State<test>
-{
+class testState extends State<test> {
   File? _image;
   bool _loading = false;
   List<dynamic>? _output;
@@ -28,7 +27,7 @@ class testState extends State<test>
   }
 
   pickGalleryImage() async {
-    XFile? image = await _picker.pickImage (source: ImageSource.gallery);
+    XFile? image = await _picker.pickImage(source: ImageSource.gallery);
 
     if (image == null) {
       return null;
@@ -71,7 +70,6 @@ class testState extends State<test>
   loadModel() async {
     await Tflite.loadModel(
       model: 'assets/model_unquant_cash.tflite',
-
       labels: 'assets/labels_cash.txt',
     );
   }
@@ -89,9 +87,9 @@ class testState extends State<test>
             _image == null
                 ? Text('No image selected')
                 : Container(
-              child: Image.file(_image!),
-              height: 250.0, // Fixed height for image
-            ),
+                    child: Image.file(_image!),
+                    height: 250.0, // Fixed height for image
+                  ),
             SizedBox(height: 20.0),
             _output != null ? Text('${_output![0]['label']}') : Container(),
             SizedBox(height: 50.0),
