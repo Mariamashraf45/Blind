@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:divergent/screens/blind/voice_notes.dart';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter_tflite/flutter_tflite.dart';
@@ -174,7 +173,7 @@ class _HomePageState extends State<HomePage> {
                                 fontWeight: FontWeight.bold))))),
             color: Colors.indigo[700],
           ),
-          Container(
+       /*   Container(
             child: Center(
                 child: SizedBox.expand(
                     // ignore: deprecated_member_use
@@ -189,7 +188,7 @@ class _HomePageState extends State<HomePage> {
                                 color: Colors.indigo[700],
                                 fontWeight: FontWeight.bold))))),
             color: Colors.yellow[100],
-          ), //Color(0xffb56576)),
+          ), */
           Container(
               child: Center(
                   child: SizedBox.expand(
@@ -198,6 +197,7 @@ class _HomePageState extends State<HomePage> {
                           style: ButtonStyle(
                               backgroundColor:
                                   MaterialStatePropertyAll(Color(0xFFF9E2E))),
+
                           onPressed: () {
                             Navigator.of(context).push(MaterialPageRoute(
                                 builder: (context) => test()));
@@ -205,9 +205,9 @@ class _HomePageState extends State<HomePage> {
                           child: Text("Currency Identifier",
                               style: TextStyle(
                                   fontSize: 27.0,
-                                  color: Colors.yellow[100],
+                                  color: Colors.indigo[700],
                                   fontWeight: FontWeight.bold))))),
-              color: Colors.indigo[700]),
+              color: Colors.yellow[100]),
         ],
         scrollDirection: Axis.horizontal,
         pageSnapping: true,
@@ -226,15 +226,10 @@ class _HomePageState extends State<HomePage> {
       await flutterTts.speak("Text Extraction from images");
     } else if (a == 2) {
       if (await Vibration.hasVibrator() == true) {
-        Vibration.vibrate(amplitude: 128, duration: 1400);
-      }
-      await flutterTts.speak("Add notes");
-    } else if (a == 3) {
-      if (await Vibration.hasVibrator() == true) {
         Vibration.vibrate(amplitude: 128, duration: 1800);
       }
       await flutterTts.speak("Currency Identifier");
-    } else if (a == 4) {
+    } else if (a == 3) {
       if (await Vibration.hasVibrator() == true) {
         Vibration.vibrate(amplitude: 128, duration: 2200);
       }

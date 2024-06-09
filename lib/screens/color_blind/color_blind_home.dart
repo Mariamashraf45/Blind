@@ -1,189 +1,179 @@
-
-
-import 'package:divergent/screens/color_blind/screens/capture_display.dart';
-import 'package:divergent/screens/color_blind/screens/image_color.dart';
+import 'dart:io';
+import 'dart:ui' as ui;
+import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
+import 'package:flutter/rendering.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 
-class ColorBlindHome extends StatefulWidget {
-  const ColorBlindHome({key}) : super(key: key);
-
+class ImagePickerPage extends StatefulWidget {
   @override
-  _ColorBlindHomeState createState() => _ColorBlindHomeState();
+  _ImagePickerPageState createState() => _ImagePickerPageState();
 }
 
-class _ColorBlindHomeState extends State<ColorBlindHome> {
-  var _image;
-  Future getImage(ImgSource source) async {
-    var image = await ImagePickerGC.pickImage(
-      maxWidth: 250,
-        maxHeight: 250,
-        galleryIcon: Icon(CupertinoIcons.question),
-     imageQuality: 100,
-        enableCloseButton: true,
-        closeIcon: Icon(
-          Icons.close,
-          color: Colors.red,
-          size: 12,
-        ),
-        context: context,
-        source: source,
-        barrierDismissible: true,
-        cameraIcon: Icon(
-          Icons.camera_alt,
-          color: Colors.red,
-        ), //cameraIcon and galleryIcon can change. If no icon provided default icon will be present
-        cameraText: Text(
-          "From Camera",
-          style: TextStyle(color: Colors.red),
-        ),
-        galleryText: Text(
-          "From Gallery",
-          style: TextStyle(color: Colors.blue),
-        ));
-    setState(() {
-      _image = image;
+class _ImagePickerPageState extends State<ImagePickerPage> {
+  final ImagePicker _picker = ImagePicker();
+  final FlutterTts _flutterTts = FlutterTts();
+  File? _selectedImage;
+  ui.Image? _image;
+  Color _indicatorColor = Colors.grey;
+  String _colorName = "";
 
-    });
-    if (_image != null) {
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => ImageColor(path: _image.path)));
+  Future<void> _pickImage(ImageSource source) async {
+    final pickedFile = await _picker.pickImage(source: source);
+
+    if (pickedFile != null) {
+      File imageFile = File(pickedFile.path);
+      setState(() {
+        _selectedImage = imageFile;
+      });
+
+      _loadImage(imageFile);
+    } else {
+      print('No image selected.');
     }
+  }
+
+  Future<void> _loadImage(File imageFile) async {
+    final data = await imageFile.readAsBytes();
+    final uiImage = await decodeImageFromList(data);
+    setState(() {
+      _image = uiImage;
+    });
+  }
+
+  Future<void> _detectColor(Offset position) async {
+    if (_image == null) return;
+
+    int x = position.dx.round();
+    int y = position.dy.round();
+
+    final byteData = await _image!.toByteData(format: ui.ImageByteFormat.rawRgba);
+    final buffer = byteData!.buffer.asUint8List();
+
+    int index = (y * _image!.width + x) * 4;
+    int r = buffer[index];
+    int g = buffer[index + 1];
+    int b = buffer[index + 2];
+    int a = buffer[index + 3];
+
+    Color detectedColor = Color.fromARGB(a, r, g, b);
+    String colorName = _getColorName(detectedColor);
+
+    setState(() {
+      _indicatorColor = detectedColor;
+      _colorName = colorName;
+    });
+
+    _speak(colorName);
+  }
+
+  String _getColorName(Color color) {
+    // Define color ranges and their corresponding names
+    final colorRanges = {
+      'Black': {'minR': 0, 'maxR': 25, 'minG': 0, 'maxG': 25, 'minB': 0, 'maxB': 25},
+      'White': {'minR': 230, 'maxR': 255, 'minG': 230, 'maxG': 255, 'minB': 230, 'maxB': 255},
+      'Red': {'minR': 200, 'maxR': 255, 'minG': 0, 'maxG': 50, 'minB': 0, 'maxB': 50},
+      'Green': {'minR': 0, 'maxR': 50, 'minG': 200, 'maxG': 255, 'minB': 0, 'maxB': 50},
+      'Blue': {'minR': 0, 'maxR': 50, 'minG': 0, 'maxG': 50, 'minB': 200, 'maxB': 255},
+      'Yellow': {'minR': 200, 'maxR': 255, 'minG': 200, 'maxG': 255, 'minB': 0, 'maxB': 50},
+      'Orange': {'minR': 200, 'maxR': 255, 'minG': 100, 'maxG': 150, 'minB': 0, 'maxB': 50},
+      'Purple': {'minR': 100, 'maxR': 150, 'minG': 0, 'maxG': 50, 'minB': 100, 'maxB': 150},
+    };
+
+    // Find the closest color range
+    String closestColor = 'Unknown';
+    double minDistance = double.infinity;
+    colorRanges.forEach((name, range) {
+      int minR = range['minR']!;
+      int maxR = range['maxR']!;
+      int minG = range['minG']!;
+      int maxG = range['maxG']!;
+      int minB = range['minB']!;
+      int maxB = range['maxB']!;
+
+      double distance = sqrt(pow(color.red - ((minR + maxR) / 2), 2) +
+          pow(color.green - ((minG + maxG) / 2), 2) +
+          pow(color.blue - ((minB + maxB) / 2), 2));
+
+      if (distance < minDistance) {
+        minDistance = distance;
+        closestColor = name;
+      }
+    });
+
+    return closestColor;
+  }
+
+  Future<void> _speak(String text) async {
+    await _flutterTts.speak(text);
   }
 
   @override
   Widget build(BuildContext context) {
-    print('error3');
     return Scaffold(
-      backgroundColor: Colors.indigo,
       appBar: AppBar(
-        backgroundColor: Colors.indigo,
-        elevation: 0,
-        title: Text(
-          'Select an option',
-          style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.w700,
-              fontSize: 21,
-              letterSpacing: 1.2),
-        ),
-        flexibleSpace: Container(
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(25),
-                  bottomRight: Radius.circular(25)),
-              color: Colors.indigo[800]),
-        ),
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back,
-            color: Colors.white,
-          ),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
       ),
-      body: Center(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.only(left: 15.0, right: 15.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                InkWell(
-                  onTap: () => getImage(ImgSource.Gallery),
+      body: Column(
+        children: [
+          if (_selectedImage != null)
+            Expanded(
+              child: GestureDetector(
+                onPanDown: (details) {
+                  _detectColor(details.localPosition);
+                },
+                child: Image.file(_selectedImage!),
+              ),
+            )
+          else
+            Expanded(
+              child: Center(
+                child: Text('No image selected.'),
+              ),
+            ),
+          SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                children: [
+                  Container(width: double.infinity,
+                    height: 200,
+                    child: ElevatedButton(style: ButtonStyle(backgroundColor: WidgetStatePropertyAll(Colors.indigo)),
+                      onPressed: () => _pickImage(ImageSource.camera),
 
-                  child: Container(
-
-                    height: 150,
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          blurRadius: 10,
-                          offset: Offset(0, 5),
-                        ),
-                      ],
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(1.0),
-                      child: Card(color: Colors.yellow[100],
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20)),
-                        child: Padding(
-                            padding: const EdgeInsets.all(10.0),
-                            child: Row(
-                              children: <Widget>[
-                                Padding(
-                                  padding: const EdgeInsets.all(20.0),
-                                  child: new Container(
-                                    child: new Text(
-                                      'From Gallery',
-                                      style: TextStyle(
-                                          color: Color(0xff375079),
-                                          fontSize: 30),
-                                    ),
-                                  ),
-                                )
-                              ],
-                            )),
-                      ),
+                      child: Text('Camera',style:TextStyle(color: Colors.white,fontSize: 25) ,),
                     ),
                   ),
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                InkWell(
-                  onTap: () => getImage(ImgSource.Camera),
-                  child: Container(
-                    height: 150,
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          blurRadius: 10,
-                          offset: Offset(0, 5),
-                        ),
-                      ],
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(1.0),
-                      child: Card(color: Colors.yellow[100],
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20)),
-                        child: Padding(
-                            padding: const EdgeInsets.all(10.0),
-                            child: Row(
-                              children: <Widget>[
-                                Padding(
-                                  padding: const EdgeInsets.all(20.0),
-                                  child: new Container(
-                                    child: new Text(
-                                      'From Camera',
-                                      style: TextStyle(
-                                          color: Color(0xff375079),
-                                          fontSize: 30),
-                                    ),
-                                  ),
-                                )
-                              ],
-                            )),
-                      ),
+                  SizedBox(height: 20),
+                  Container(width: double.infinity,
+                    height: 200,
+                    child: ElevatedButton(style: ButtonStyle(backgroundColor: WidgetStatePropertyAll(Colors.indigo)),
+                      onPressed: () =>
+                        _pickImage(ImageSource.gallery),
+    child: Text('Gallery',style: TextStyle(color: Colors.white,fontSize: 25),),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
-        ),
+          SizedBox(height: 20),
+          Container(
+            margin: EdgeInsets.symmetric(vertical: 10.0),
+            width: 50.0,
+            height: 50.0,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: _indicatorColor,
+            ),
+          ),
+          Text(
+            _colorName,
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          ),
+        ],
       ),
     );
   }

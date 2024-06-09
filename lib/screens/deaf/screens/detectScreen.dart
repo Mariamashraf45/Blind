@@ -43,7 +43,6 @@ class _DetectScreenState extends State<DetectScreen>
     //Setup Animation
     _setupAnimation();
 
-    //Subscribe to TFLite's Classify events
     TFLiteHelper.tfLiteResultsController.stream.listen(
         (value) {
           value.forEach((element) {

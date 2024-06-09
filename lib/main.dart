@@ -4,6 +4,7 @@ import 'package:divergent/screens/blind/blind_home.dart';
 import 'package:divergent/screens/blind/blind_search/blind_search_home.dart';
 import 'package:divergent/screens/blind/blind_search/speach_text.dart';
 import 'package:divergent/screens/color_blind/color_blind_home.dart';
+import 'package:divergent/screens/deaf/screens/landing_screen.dart';
 import 'package:divergent/screens/profile.dart';
 import 'package:divergent/sos_activate.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -38,7 +39,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: MySplash(),
+      home:MySplash(),
+
+
     );
   }
 }
@@ -331,7 +334,8 @@ class _MyHomePageState1 extends State<MyHomePage1> {
 
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => ColorBlindHome()),
+                    MaterialPageRoute(builder: (context) => ImagePickerPage()),
+
                   );
                 },
                 child: Container(

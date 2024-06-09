@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_tflite/flutter_tflite.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 import 'package:image_picker/image_picker.dart';
 
 class test extends StatefulWidget {
@@ -9,6 +10,7 @@ class test extends StatefulWidget {
 }
 
 class testState extends State<test> {
+  final FlutterTts flutterTts = FlutterTts();
   File? _image;
   bool _loading = false;
   List<dynamic>? _output;
@@ -81,27 +83,49 @@ class testState extends State<test> {
         title: Text('Currency Identifier'),
       ),
       body: Center(
-        child: Column(
-          children: [
-            SizedBox(height: 160.0),
-            _image == null
-                ? Text('No image selected')
-                : Container(
-                    child: Image.file(_image!),
-                    height: 250.0, // Fixed height for image
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Column(
+              children: [
+                SizedBox(height: 160.0),
+                _image == null
+                    ? Text('No image selected')
+                    : Container(
+                        child: Image.file(_image!),
+                        height: 250.0, // Fixed height for image
+                      ),
+                SizedBox(height: 20.0),
+                _output != null ? Text('${_output![0]['label']}') : Container(),
+                SizedBox(height: 50.0),
+                Container(height: 200,
+                  width: double.infinity,
+                  child: ElevatedButton(style: ButtonStyle(backgroundColor: WidgetStatePropertyAll(Colors.indigo)),
+                    onPressed: (){
+                      flutterTts.speak("Take Picture");
+                      pickImage();
+                    },
+                    child: Text('Take Picture',style: TextStyle(color: Colors.white,fontSize: 25),),
                   ),
-            SizedBox(height: 20.0),
-            _output != null ? Text('${_output![0]['label']}') : Container(),
-            SizedBox(height: 50.0),
-            ElevatedButton(
-              onPressed: pickImage,
-              child: Text('Take Picture'),
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                Container(
+                  height: 200,
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    style: ButtonStyle(backgroundColor: WidgetStatePropertyAll(Colors.indigo)),
+                    onPressed: (){
+                      flutterTts.speak("Camera Roll");
+                      pickGalleryImage();
+                    },
+                    child: Text('Camera Roll',style: TextStyle(fontSize: 25,color: Colors.white),),
+                  ),
+                ),
+              ],
             ),
-            ElevatedButton(
-              onPressed: pickGalleryImage,
-              child: Text('Camera Roll'),
-            ),
-          ],
+          ),
         ),
       ),
     );
